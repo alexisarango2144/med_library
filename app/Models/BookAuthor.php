@@ -7,7 +7,6 @@ use Illuminate\Database\Eloquent\Relations\Pivot;
 
 class BookAuthor extends Pivot
 {
-    use HasFactory;
 
     protected $table = "book_author";
 
@@ -16,7 +15,8 @@ class BookAuthor extends Pivot
     public $timestamps = false;
     protected $fillable = [
         'book_id',
-        'author_id'
+        'author_id',
+        'author_order'
     ];
 
     protected function casts(): array
@@ -24,6 +24,7 @@ class BookAuthor extends Pivot
         return [
             'book_id' => 'integer',
             'author_id' => 'integer',
+            'author_order' => 'integer'
         ];
     }
 }

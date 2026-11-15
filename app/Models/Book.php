@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -16,6 +17,7 @@ class Book extends Model
 
     protected $fillable = [
         'title',
+        'slug',
         'isbn',
         'publication_year',
         'page_count',
@@ -34,7 +36,10 @@ class Book extends Model
 
     public function authors(): BelongsToMany
     {
-        return $this->belongsToMany(Author::class, 'book_author', 'book_id', 'author_id');
+        return $this->belongsToMany(Author::class, 'book_author', 'book_id', 'author_id')
+            ->using(BookAuthor::class)
+            ->withPivot('author_order')
+            ->orderByPivot('author_order', 'asc');
     }
 
     public function loans(): HasMany
@@ -59,5 +64,30 @@ class Book extends Model
     public function getRouteKeyName()
     {
         return 'slug';
+    }
+
+    /*
+    | Query Scopes
+    */
+    public function scopeInStock(Builder $query): Builder
+    {
+        return $query->where('stock', '>', 0);
+    }
+
+    public function scopeByPublicationYear(Builder $query, int $year): Builder
+    {
+        return $query->where('publication_year', $year);
+    }
+
+    public function scopeByAuthor(Builder $query, int|string $author): Builder
+    {
+        return $query->whereHas('authors', function (Builder $q) use ($author) {
+            if (is_numeric($author)) {
+                $q->where('authors.id', $author);
+            } else {
+                $q->where('authors.name', 'ILIKE', "%{$author}%")
+                  ->orWhere('authors.last_name', 'ILIKE', "%{$author}%");
+            }
+        });
     }
 }

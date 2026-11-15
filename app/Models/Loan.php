@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -19,8 +21,7 @@ class Loan extends Model
         'book_id',
         'borrowed_at',
         'estimated_return_date',
-        'return_date',
-        'status'
+        'return_date'
     ];
 
     protected function casts(): array
@@ -43,5 +44,25 @@ class Loan extends Model
     public function book(): BelongsTo
     {
         return $this->belongsTo(Book::class);
+    }
+
+    protected function status(): Attribute
+    {
+        return Attribute::make(
+            set: fn (string $value) => strtolower(trim($value)),
+        );
+    }
+
+    protected function isDelayed(): Attribute
+    {
+        return Attribute::make(
+            get: function () {
+                if ($this->status === 'returned') {
+                    return $this->return_date && $this->return_date->gt($this->estimated_return_date);
+                }
+
+                return Carbon::today()->gt($this->estimated_return_date);
+            },
+        );
     }
 }

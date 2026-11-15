@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::create('books', function (Blueprint $table) {
             $table->id();
-            $table->string('title', 150)->index();
-            $table->string('slug', 150)->unique();
+            $table->string('title', 255)->index();
+            $table->string('slug', 255)->unique();
             $table->string('isbn', 13)->unique();
             $table->unsignedSmallInteger('publication_year')->nullable()->index();
             $table->unsignedInteger('page_count')->nullable();

@@ -15,7 +15,6 @@ class User extends Model
         'name',
         'last_name',
         'email',
-        'phone_number',
-        'is_active',
+        'phone_number'
     ];
 }

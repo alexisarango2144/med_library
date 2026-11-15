@@ -25,13 +25,27 @@ class DatabaseSeeder extends Seeder
         $authors = Author::factory(10)->create();
         $books = Book::factory(20)->create();
 
-        $books->each(function (Book $book) use ($authors) {
+        foreach ($books as $book) {
             $randomAuthorIds = $authors->random(fake()->numberBetween(1, min(3, $authors->count())))
-                               ->pluck('id')
-                               ->toArray();
+                                       ->pluck('id')
+                                       ->values();
+            $pivotData = [];
+            foreach ($randomAuthorIds as $index => $authorId) {
+                $pivotData[$authorId] = [
+                    'author_order' => $index + 1
+                ];
+            }
 
-            $book->authors()->syncWithoutDetaching($randomAuthorIds);
-        });
+            $book->authors()->syncWithoutDetaching($pivotData);
+        }
+
+        // $books->each(function (Book $book) use ($authors) {
+        //     $randomAuthorIds = $authors->random(fake()->numberBetween(1, min(3, $authors->count())))
+        //                        ->pluck('id')
+        //                        ->toArray();
+
+        //     $book->authors()->syncWithoutDetaching($randomAuthorIds);
+        // });
         Loan::factory(10)->create();
     }
 }

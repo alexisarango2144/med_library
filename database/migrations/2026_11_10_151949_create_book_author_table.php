@@ -20,6 +20,9 @@ return new class extends Migration
                 ->constrained('authors')
                 ->onDelete('restrict');
 
+            $table->unsignedSmallInteger('author_order')
+                ->default(1);
+
             $table->primary(['book_id', 'author_id']);
         });
     }

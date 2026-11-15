@@ -24,6 +24,7 @@ class StoreBookRequest extends FormRequest
     {
         return [
             'title'            => ['required', 'string', 'max:255'],
+            'slug'             => ['required', 'string', 'max:255', 'unique:books,slug'],
             'isbn'             => ['nullable', 'string', 'max:20', 'unique:books,isbn'],
             'publication_year' => ['nullable', 'integer', 'min:1000', 'max:' . (date('Y') + 1)],
             'page_count'       => ['required', 'integer', 'min:0', 'max:32767'], // smallint check >= 0

@@ -4,6 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class UpdateBookRequest extends FormRequest
 {
@@ -22,8 +23,18 @@ class UpdateBookRequest extends FormRequest
      */
     public function rules(): array
     {
+        $bookId = $this->route('book')->id ?? $this->route('book');
+
         return [
-            //
+            'title'            => ['sometimes', 'required', 'string', 'max:255'],
+            'slug'             => ['sometimes', 'required', 'string', 'max:255', Rule::unique('books', 'slug')->ignore($bookId)],
+            'isbn'             => ['nullable', 'string', 'max:20', Rule::unique('books', 'isbn')->ignore($bookId)],
+            'publication_year' => ['nullable', 'integer', 'min:1000', 'max:' . (date('Y') + 1)],
+            'page_count'       => ['sometimes', 'required', 'integer', 'min:0', 'max:32767'],
+            'description'      => ['nullable', 'string'],
+            'stock'            => ['sometimes', 'required', 'integer', 'min:0'],
+            'author_ids'       => ['nullable', 'array'],
+            'author_ids.*'     => ['integer', 'exists:authors,id'],
         ];
     }
 }

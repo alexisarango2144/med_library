@@ -23,15 +23,16 @@ class StoreBookRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'title'            => ['required', 'string', 'max:255'],
-            'slug'             => ['required', 'string', 'max:255', 'unique:books,slug'],
-            'isbn'             => ['nullable', 'string', 'max:20', 'unique:books,isbn'],
-            'publication_year' => ['nullable', 'integer', 'min:1000', 'max:' . (date('Y') + 1)],
-            'page_count'       => ['required', 'integer', 'min:0', 'max:32767'], // smallint check >= 0
-            'description'      => ['nullable', 'string'],
-            'stock'            => ['required', 'integer', 'min:0'],
-            'author_ids'       => ['nullable', 'array'],
-            'author_ids.*'     => ['integer', 'exists:authors,id'],
+            'title'             => ['required', 'string', 'max:255'],
+            'slug'              => ['required', 'string', 'max:255', 'unique:books,slug'],
+            'isbn'              => ['nullable', 'string', 'max:20', 'unique:books,isbn'],
+            'publication_year'  => ['nullable', 'integer', 'min:1000', 'max:' . (date('Y') + 1)],
+            'page_count'        => ['required', 'integer', 'min:0', 'max:32767'], // smallint check >= 0
+            'description'       => ['nullable', 'string'],
+            'stock'             => ['required', 'integer', 'min:0'],
+            'available_stock'   => ['required', 'integer', 'min:0', 'lte:stock'],
+            'author_ids'        => ['nullable', 'array'],
+            'author_ids.*'      => ['integer', 'exists:authors,id'],
         ];
     }
 }

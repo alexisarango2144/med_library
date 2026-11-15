@@ -4,6 +4,7 @@ namespace Database\Factories;
 
 use App\Models\Book;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Support\Str;
 
 /**
  * @extends Factory<Book>
@@ -17,14 +18,18 @@ class BookFactory extends Factory
      */
     public function definition(): array
     {
+        $title = rtrim(fake()->unique()->sentence(4), '.');
+        $stock = fake()->numberBetween(1,50);
+        
         return [
-            'title' => fake()->sentence(3),
-            'slug' => fake()->unique()->slug(),
+            'title' => $title,
+            'slug' => Str::slug($title),
             'isbn' => fake()->unique()->isbn13(),
             'publication_year' => fake()->year(max:2026),
             'page_count' => fake()->numberBetween(100, 1000),
             'description' => fake()->paragraph(),
-            'stock' => fake()->numberBetween(0, 50)
+            'stock' => $stock,
+            'available_stock' => fake()->numberBetween(0, $stock)
         ];
     }
 }

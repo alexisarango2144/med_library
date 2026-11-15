@@ -22,15 +22,17 @@ class Book extends Model
         'publication_year',
         'page_count',
         'description',
-        'stock'
+        'stock',
+        'available_stock'
     ];
 
     protected function casts(): array
     {
         return [
-            'publication_year' => 'integer',
-            'page_count'       => 'integer',
-            'stock'            => 'integer',
+            'publication_year'  => 'integer',
+            'page_count'        => 'integer',
+            'stock'             => 'integer',
+            'available_stock'   => 'integer',
         ];
     }
 
@@ -72,6 +74,11 @@ class Book extends Model
     public function scopeInStock(Builder $query): Builder
     {
         return $query->where('stock', '>', 0);
+    }
+    
+    public function scopeAvailableStock(Builder $query): Builder
+    {
+        return $query->where('available_stock', '>', 0);
     }
 
     public function scopeByPublicationYear(Builder $query, int $year): Builder

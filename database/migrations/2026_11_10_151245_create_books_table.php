@@ -2,6 +2,7 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
@@ -20,8 +21,12 @@ return new class extends Migration
             $table->unsignedInteger('page_count')->nullable();
             $table->text('description')->nullable();
             $table->unsignedInteger('stock')->default(0);
+            $table->unsignedInteger('available_stock')->default(0);
             $table->timestamps();
         });
+
+        DB::statement('ALTER TABLE books ADD CONSTRAINT chk_books_stock CHECK (stock >= 0)');
+        DB::statement('ALTER TABLE books ADD CONSTRAINT chk_books_available_stock CHECK (available_stock >= 0 AND available_stock <= stock)');
     }
 
     /**

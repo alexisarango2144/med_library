@@ -23,7 +23,10 @@ class UpdateBookRequest extends FormRequest
      */
     public function rules(): array
     {
-        $bookId = $this->route('book')->id ?? $this->route('book');
+        $book = $this->route('book');
+        $bookId = $book->id ?? $book;
+        
+        $maxStock = $this->input('stock', $book->stock ?? 0);
 
         return [
             'title'            => ['sometimes', 'required', 'string', 'max:255'],
@@ -33,6 +36,7 @@ class UpdateBookRequest extends FormRequest
             'page_count'       => ['sometimes', 'required', 'integer', 'min:0', 'max:32767'],
             'description'      => ['nullable', 'string'],
             'stock'            => ['sometimes', 'required', 'integer', 'min:0'],
+            'available_stock'            => ['sometimes', 'required', 'integer', 'min:0', 'max:' . $maxStock],
             'author_ids'       => ['nullable', 'array'],
             'author_ids.*'     => ['integer', 'exists:authors,id'],
         ];

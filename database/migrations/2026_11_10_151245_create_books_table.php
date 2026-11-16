@@ -23,6 +23,7 @@ return new class extends Migration
             $table->unsignedInteger('stock')->default(0);
             $table->unsignedInteger('available_stock')->default(0);
             $table->timestamps();
+            $table->softDeletes();
         });
 
         DB::statement('ALTER TABLE books ADD CONSTRAINT chk_books_stock CHECK (stock >= 0)');

@@ -2,6 +2,7 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
@@ -20,6 +21,9 @@ return new class extends Migration
             $table->text('biography')->nullable();
             $table->timestamps();
         });
+
+        DB::statement('CREATE EXTENSION IF NOT EXISTS pg_trgm');
+        DB::statement("CREATE INDEX authors_full_search_trgm_idx ON authors USING GIN ((COALESCE(name, '') || ' ' || COALESCE(last_name, '') || ' ' || COALESCE(nationality, '')) gin_trgm_ops)");
     }
 
     /**

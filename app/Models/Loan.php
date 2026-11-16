@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Facades\DB;
 
 class Loan extends Model
 {
@@ -64,5 +65,17 @@ class Loan extends Model
                 return Carbon::today()->gt($this->estimated_return_date);
             },
         );
+    }
+
+    public function markAsReturned(): void
+    {
+        DB::transaction(function () {
+            $this->update([
+                'status'      => 'returned',
+                'return_date' => now()->toDateString(),
+            ]);
+
+            $this->book()->increment('available_stock');
+        });
     }
 }

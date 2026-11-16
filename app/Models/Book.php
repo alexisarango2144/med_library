@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Facades\DB;
 
 class Book extends Model
 {
@@ -52,17 +53,17 @@ class Book extends Model
     protected function title(): Attribute
     {
         return Attribute::make(
-            set: fn (string $value) => trim($value),
+            set: fn(string $value) => trim($value),
         );
     }
 
     protected function isbn(): Attribute
     {
         return Attribute::make(
-            set: fn (?string $value) => $value ? preg_replace('/[^0-9X]/i', '', $value) : null,
+            set: fn(?string $value) => $value ? preg_replace('/[^0-9X]/i', '', $value) : null,
         );
     }
-    
+
     public function getRouteKeyName()
     {
         return 'slug';
@@ -75,7 +76,7 @@ class Book extends Model
     {
         return $query->where('stock', '>', 0);
     }
-    
+
     public function scopeAvailableStock(Builder $query): Builder
     {
         return $query->where('available_stock', '>', 0);
@@ -93,7 +94,7 @@ class Book extends Model
                 $q->where('authors.id', $author);
             } else {
                 $q->where('authors.name', 'ILIKE', "%{$author}%")
-                  ->orWhere('authors.last_name', 'ILIKE', "%{$author}%");
+                    ->orWhere('authors.last_name', 'ILIKE', "%{$author}%");
             }
         });
     }

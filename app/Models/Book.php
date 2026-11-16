@@ -8,11 +8,12 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\DB;
 
 class Book extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes;
 
     protected $table = 'books';
 
@@ -69,6 +70,25 @@ class Book extends Model
         return 'slug';
     }
 
+    public function syncAuthorsWithOrder(array $authors): void
+    {
+        $pivotData = [];
+
+        foreach(array_values($authors) as $index => $author) {
+            if(is_array($author)) {
+                $pivotData[$author['id']] = [
+                    'author_order' => $author['author_order'] ?? ($index + 1),
+                ];
+            } else {
+                $pivotData[$author] = [
+                    'author_order' => $index + 1,
+                ];
+            }
+        }
+
+        $this->authors()->sync($pivotData);
+    }
+
     /*
     | Query Scopes
     */
@@ -93,8 +113,11 @@ class Book extends Model
             if (is_numeric($author)) {
                 $q->where('authors.id', $author);
             } else {
-                $q->where('authors.name', 'ILIKE', "%{$author}%")
-                    ->orWhere('authors.last_name', 'ILIKE', "%{$author}%");
+                $search = addcslashes(trim($author), '%_\\');
+                $q->whereRaw(
+                    "(COALESCE(authors.name, '') || ' ' || COALESCE(authors.last_name, '') || ' ' || COALESCE(authors.nationality, '')) ILIKE ?",
+                    ["%{$search}%"]
+                );
             }
         });
     }

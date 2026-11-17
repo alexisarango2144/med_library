@@ -84,20 +84,16 @@ class AuthorController extends Controller
      */
     public function destroy(Author $author): JsonResponse
     {
-        try {
-            $author->delete();
-
+        if ($author->books()->exists()) {
             return response()->json([
-                'message' => 'Autor eliminado con éxito.'
-            ], 200);
-        } catch (QueryException $e) {
-            if ($e->getCode() === '23503') {
-                return response()->json([
-                    'message' => 'No se puede eliminar el autor porque tiene libros asociados.'
-                ], 409);
-            }
-
-            throw $e;
+                'message' => 'No se puede eliminar el autor porque tiene libros asociados.',
+            ], 409);
         }
+
+        $author->delete();
+
+        return response()->json([
+            'message' => 'Autor eliminado correctamente.',
+        ], 200);
     }
 }

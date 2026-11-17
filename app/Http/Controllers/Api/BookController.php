@@ -96,7 +96,7 @@ class BookController extends Controller
     /**
      * Aquí se ejecuta el soft delete únicamente si no tiene préstamos activos
      * @param Book $book
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     public function destroy(Book $book): JsonResponse
     {

@@ -19,7 +19,15 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // User::factory(10)->create();
+        User::firstOrCreate(
+            ['email' => 'admin@medlibrary.test'],
+            [
+                'password' => 'password123',
+                'name' => 'Administrador',
+                'last_name' => 'Biblioteca',
+                'phone_number' => '+573000000000'
+            ]
+        );
 
         User::factory(15)->create();
         $authors = Author::factory(10)->create();

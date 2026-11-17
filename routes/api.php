@@ -6,7 +6,7 @@ use App\Http\Controllers\Api\BookController;
 use App\Http\Controllers\Api\LoanController;
 use Illuminate\Support\Facades\Route;
 
-Route::post('/login', [AuthController::class, 'login']);
+Route::post('/login', [AuthController::class, 'login'])->name('login');
 
 /**
  * Rutas Públicas
@@ -19,7 +19,7 @@ Route::apiResource('authors', AuthorController::class)->only(['index', 'show']);
  * Rutas protegidas por Sanctum
  */
 Route::middleware('auth:sanctum')->group(function () {
-    Route::post('/logout', [AuthController::class, 'logout']);
+    Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
     Route::apiResource('books', BookController::class)->except(['index', 'show']);
     Route::apiResource('authors', AuthorController::class)->except(['index', 'show']);

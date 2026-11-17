@@ -32,21 +32,46 @@ class LoanController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreLoanRequest $request): JsonResponse
+    public function store(StoreLoanRequest $request): LoanResource|JsonResponse
     {
         $validated = $request->validated();
+        $userId = $validated['user_id'];
 
-        $loan = DB::transaction(function () use ($validated){
+        $activeLoansCount = Loan::where('user_id', $userId)
+            ->whereIn('status', ['active', 'overdue'])
+            ->count();
+
+        if($activeLoansCount >= 3){
+            return response()->json([
+                'message' => 'El usuario ya alcanzó el límite máximo de 3 préstamos activos.'
+            ], 422);
+        }
+
+        $result = DB::transaction(function () use ($validated){
+            $book = Book::where('id', $validated['book_id'])
+                ->lockForUpdate()
+                ->firstOrFail();
+
+            if($book->available_stock <= 0) {
+                return response()->json([
+                    'message' => 'No hay ejemplares disponibles de este libro para préstamo.',
+                ], 422);
+            }
+
             $loan = Loan::create($validated);
 
-            if(in_array($loan->status, ['active', 'overdue'])){
-                Book::where('id', $loan->book_id)->decrement('available_stock');
+            if(in_array($loan->status ?? 'active', ['active', 'overdue'])){
+                $book->decrement('available_stock');
             }
 
             return $loan;
         });
 
-        return (new LoanResource($loan->load(['user', 'book'])))
+        if ($result instanceof JsonResponse) {
+            return $result;
+        }
+
+        return (new LoanResource($result->load(['user', 'book'])))
             ->response()
             ->setStatusCode(201);
     }

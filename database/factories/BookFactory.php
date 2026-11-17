@@ -25,7 +25,7 @@ class BookFactory extends Factory
             'title' => $title,
             'slug' => Str::slug($title),
             'isbn' => fake()->unique()->isbn13(),
-            'publication_year' => fake()->year(max:2026),
+            'publication_year' => fake()->year('now'),
             'page_count' => fake()->numberBetween(100, 1000),
             'description' => fake()->paragraph(),
             'stock' => $stock,

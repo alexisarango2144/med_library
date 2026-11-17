@@ -13,7 +13,7 @@ class UpdateBookRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -29,16 +29,16 @@ class UpdateBookRequest extends FormRequest
         $maxStock = $this->input('stock', $book->stock ?? 0);
 
         return [
-            'title'            => ['sometimes', 'required', 'string', 'max:255'],
-            'slug'             => ['sometimes', 'required', 'string', 'max:255', Rule::unique('books', 'slug')->ignore($bookId)],
-            'isbn'             => ['nullable', 'string', 'max:20', Rule::unique('books', 'isbn')->ignore($bookId)],
-            'publication_year' => ['nullable', 'integer', 'min:1000', 'max:' . (date('Y') + 1)],
-            'page_count'       => ['sometimes', 'required', 'integer', 'min:0', 'max:32767'],
-            'description'      => ['nullable', 'string'],
-            'stock'            => ['sometimes', 'required', 'integer', 'min:0'],
-            'available_stock'            => ['sometimes', 'required', 'integer', 'min:0', 'max:' . $maxStock],
-            'author_ids'       => ['nullable', 'array'],
-            'author_ids.*'     => ['integer', 'exists:authors,id'],
+            'title'             => ['sometimes', 'required', 'string', 'max:255'],
+            'slug'              => ['sometimes', 'required', 'string', 'max:255', Rule::unique('books', 'slug')->ignore($bookId)],
+            'isbn'              => ['nullable', 'string', 'max:20', Rule::unique('books', 'isbn')->ignore($bookId)],
+            'publication_year'  => ['nullable', 'integer', 'min:1000', 'max:' . (date('Y') + 1)],
+            'page_count'        => ['sometimes', 'required', 'integer', 'min:0', 'max:32767'],
+            'description'       => ['nullable', 'string'],
+            'stock'             => ['sometimes', 'required', 'integer', 'min:0'],
+            'available_stock'   => ['sometimes', 'required', 'integer', 'min:0', 'max:' . $maxStock],
+            'author_ids'        => ['sometimes', 'nullable', 'array'],
+            'author_ids.*'      => ['integer', 'exists:authors,id'],
         ];
     }
 }

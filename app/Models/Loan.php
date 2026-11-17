@@ -22,7 +22,8 @@ class Loan extends Model
         'book_id',
         'borrowed_at',
         'estimated_return_date',
-        'return_date'
+        'return_date',
+        'status'
     ];
 
     protected function casts(): array

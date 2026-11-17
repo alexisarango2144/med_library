@@ -68,8 +68,8 @@ class BookController extends Controller
 
             $book = Book::create($validated);
 
-            if(!empty($validated['authors'])) {
-                $book->syncAuthorsWithOrder($validated['authors']);
+            if(!empty($validated['author_ids'])) {
+                $book->syncAuthorsWithOrder($validated['author_ids']);
             }
 
             return $book;
@@ -85,8 +85,8 @@ class BookController extends Controller
         DB::transaction(function () use ($book, $validated) {
             $book->update($validated);
 
-            if(array_key_exists('authors', $validated)) {
-                $book->syncAuthorsWithOrder($validated['authors'] ?? []);
+            if(array_key_exists('author_ids', $validated)) {
+                $book->syncAuthorsWithOrder($validated['author_ids'] ?? []);
             }
         });
 

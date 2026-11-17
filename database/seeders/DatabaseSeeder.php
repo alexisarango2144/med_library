@@ -22,7 +22,7 @@ class DatabaseSeeder extends Seeder
         User::firstOrCreate(
             ['email' => 'admin@medlibrary.test'],
             [
-                'password' => 'password123',
+                'password' => 'pass123',
                 'name' => 'Administrador',
                 'last_name' => 'Biblioteca',
                 'phone_number' => '+573000000000'
@@ -47,13 +47,6 @@ class DatabaseSeeder extends Seeder
             $book->authors()->syncWithoutDetaching($pivotData);
         }
 
-        // $books->each(function (Book $book) use ($authors) {
-        //     $randomAuthorIds = $authors->random(fake()->numberBetween(1, min(3, $authors->count())))
-        //                        ->pluck('id')
-        //                        ->toArray();
-
-        //     $book->authors()->syncWithoutDetaching($randomAuthorIds);
-        // });
         Loan::factory(10)->create();
     }
 }

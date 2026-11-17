@@ -30,7 +30,8 @@ class UserFactory extends Factory
             'email' => fake()->unique()->safeEmail(),
             // 'phone_number' => fake()->phoneNumber(),
             'phone_number' => fake()->regexify('\+[1-9][0-9]{9,11}'),
-            'is_active' => fake()->boolean()
+            'is_active' => fake()->boolean(),
+            'password' => 'pass123'
         ];
     }
 

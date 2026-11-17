@@ -60,6 +60,8 @@ CREATE TABLE users(
 	created_at TIMESTAMP NOT NULL,
 	updated_at TIMESTAMP DEFAULT null,
 	is_active boolean DEFAULT true 
+	
+	-- NOTA: El campo password se crea desde la migración
 );
 
 CREATE TABLE loans(
